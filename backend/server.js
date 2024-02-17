@@ -12,9 +12,9 @@ const path = require('path')
  connectDB();
 dotenv.config()
 app.use(express.json());
-app.get("/",(req,res)=>{
-    res.send("API is Running successfly ");
-})
+// app.get("/",(req,res)=>{
+//     res.send("API is Running successfly ");
+// })
 
 app.use('/api/user',userRoutes)
 app.use("/api/chat", chatRoutes);
