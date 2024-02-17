@@ -21,8 +21,7 @@ app.use("/api/message", messageRoutes);
 app.use(notFound);
 app.use(errorHandler)
 
-const PORT= process.env.PORT || 8080
-const server = app.listen(PORT,console.log("Server Started on PORT ",PORT));
+
 
 const io = require("socket.io")(server,{
     pingTimeout:6000,
@@ -66,4 +65,15 @@ io.on("connection", (socket) =>{
     console.log("USER DISCONNECTED");
     socket.leave(userData._id);
   });
+
 });
+
+app.use(express.static('./frontend/build'));
+app.get("*", (req, res) => {
+   res.sendFile(path.resolve(__dirname, "frotend", "build",     
+   "index.html"));
+});
+
+
+ const PORT= process.env.PORT || 8080
+const server = app.listen(PORT,console.log("Server Started on PORT ",PORT));

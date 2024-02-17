@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "npx nodemon backend/server.js"
+    "start": "node backend/server.js"
   },
   "author": "Tushar Karan",
   "license": "ISC",
