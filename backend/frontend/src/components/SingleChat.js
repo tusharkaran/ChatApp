@@ -18,7 +18,7 @@ import io from "socket.io-client";
 import { ChatState } from "../Context/ChatProvider";
 import ProfileModal from '../miscellaneous/ProfileModel';
 
-const ENDPOINT = "http://localhost:8080";
+const ENDPOINT = "https://talktome.azurewebsites.net/";
 var socket , selectedChatCompare;
 
 const SingleChat = ({fetchAgain,setFetchAgain}) => {

@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes')
 const {notFound,errorHandler} = require('../backend/middleware/errorMidleware')
 const chatRoutes = require('./routes/chatRoutes')
 const messageRoutes = require('./routes/messageRoutes')
+const path = require('path')
 
  connectDB();
 dotenv.config()
@@ -26,7 +27,7 @@ app.use(errorHandler)
 const io = require("socket.io")(server,{
     pingTimeout:6000,
     cors:{
-        origin: "http://localhost:3000",
+        origin: "https://talktome.azurewebsites.net/",
     },
 });
 io.on("connection", (socket) =>{
