@@ -7,14 +7,11 @@ const userRoutes = require('./routes/userRoutes')
 const {notFound,errorHandler} = require('../backend/middleware/errorMidleware')
 const chatRoutes = require('./routes/chatRoutes')
 const messageRoutes = require('./routes/messageRoutes')
-const path = require('path')
-
+const path = require("path");
  connectDB();
 dotenv.config()
 app.use(express.json());
-// app.get("/",(req,res)=>{
-//     res.send("API is Running successfly ");
-// })
+
 
 app.use('/api/user',userRoutes)
 app.use("/api/chat", chatRoutes);
@@ -30,6 +27,7 @@ const io = require("socket.io")(server,{
         origin: "https://talktome.azurewebsites.net/",
     },
 });
+
 io.on("connection", (socket) =>{
     console.log("cpnnected to socket.io");
     socket.on("setup" , (userData) =>{
@@ -67,14 +65,26 @@ io.on("connection", (socket) =>{
     socket.leave(userData._id);
   });
 
+
 });
 
-app.use(express.static('./frontend/build'));
-app.get("*", (req, res) => {
-   res.sendFile(path.resolve(__dirname, "frotend", "build",     
-   "index.html"));
-});
+// --------------------------deployment------------------------------
 
+const __dirname1 = path.resolve();
 
- const PORT= process.env.PORT || 8080
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "/frontend/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running..");
+  });
+}
+
+// --------------------------deployment------------------------------
+
+  const PORT= process.env.PORT || 8080
 const server = app.listen(PORT,console.log("Server Started on PORT ",PORT));
