@@ -16,15 +16,15 @@ app.use(express.json());
 //     res.send("API is Running successfly ");
 // })
 const __dirname1 = path.resolve();
-app.use(express.static(path.join(__dirname1, "/frontend/build")));
+app.use(express.static(path.join(__dirname1, "/backend/frontend/build")));
 
 app.use('/api/user',userRoutes)
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
 app.get("*", (req, res) => {
-   res.sendFile(path.resolve(__dirname1,"frontend", "build",     
-   "index.html"));
+   res.sendFile(path.resolve(__dirname1,"backend","frontend", "build",     
+   "index.html"));  
 });
 app.use(notFound);
 app.use(errorHandler)
