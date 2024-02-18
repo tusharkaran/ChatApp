@@ -23,7 +23,7 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
 app.get("*", (req, res) => {
-   res.sendFile(path.resolve(__dirname,"frontend", "build",     
+   res.sendFile(path.resolve(__dirname1,"frontend", "build",     
    "index.html"));
 });
 app.use(notFound);

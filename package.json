@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "homepage": "https://talktome.azurewebsites.net/",
   "scripts": {
     "start": "node backend/server.js"
   },
