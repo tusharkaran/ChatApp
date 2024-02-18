@@ -4,9 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "build": "npm install  && npm install --prefix frontend && npm run build --prefix frontend"
+    "start": "node backend/server.js"
   },
   "author": "Tushar Karan",
   "license": "ISC",
