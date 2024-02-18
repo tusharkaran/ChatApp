@@ -33,7 +33,7 @@ const server = app.listen(PORT,console.log("Server Started on PORT ",PORT));
 const io = require("socket.io")(server,{
     pingTimeout:6000,
     cors:{
-        origin: "http://localhost:3000",
+        origin: "https://talktome.azurewebsites.net/",
     },
 });
 io.on("connection", (socket) =>{
