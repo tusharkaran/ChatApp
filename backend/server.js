@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes')
 const {notFound,errorHandler} = require('../backend/middleware/errorMidleware')
 const chatRoutes = require('./routes/chatRoutes')
 const messageRoutes = require('./routes/messageRoutes')
+const path = require("path");
 
  connectDB();
 dotenv.config()
