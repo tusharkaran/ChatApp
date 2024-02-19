@@ -46,7 +46,7 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${user[0].token}`,
+          Authorization: `Bearer ${user?.token || user[0].token}`,
         },
       };
 
@@ -84,7 +84,7 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
         const config = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${user[0].token}`,
+            Authorization: `Bearer ${user?.token || user[0].token}`,
           },
         };
         setNewMessage("");
