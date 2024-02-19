@@ -17,10 +17,50 @@ const Signup = () => {
     const history = useHistory();
 
   const handleClick = () => setShow(!show);
-    const postDetails =(pics) =>{
-      console.log("picture",pic);
-      setPic("abcd.png");
-    };
+     const postDetails = (pics) => {
+    setPicLoading(true);
+    if (pics === undefined) {
+      toast({
+        title: "Please Select an Image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    console.log(pics);
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "wzeukzpi");
+      data.append("cloud_name", "dqdpwdoxs");
+      fetch("https://api.cloudinary.com/v1_1/dqdpwdoxs/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setPic(data.url.toString());
+          console.log(data.url.toString());
+          setPicLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setPicLoading(false);
+        });
+    } else {
+      toast({
+        title: "Please Select an Image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setPicLoading(false);
+      return;
+    }
+  };
 
     const submitHandler = async () => {
     setPicLoading(true);
@@ -143,7 +183,7 @@ const Signup = () => {
           type="file"
           p={1.5}
           accept="image/*"
-          onChange={(e) => postDetails(e)}
+          onChange={(e) => postDetails(e.target.files[0])}
         />
       </FormControl>
       <Button
