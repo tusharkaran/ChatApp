@@ -1,6 +1,4 @@
 export const isSameSenderMargin = (messages, m, i, userId) => {
-  // console.log(i === messages.length - 1);
-
   if (
     i < messages.length - 1 &&
     messages[i + 1].sender._id === m.sender._id &&
@@ -39,6 +37,10 @@ export const isSameUser = (messages, m, i) => {
 };
 
 export const getSender = (loggedUser, users) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  if(userInfo){
+    loggedUser = userInfo;
+  }
   return users[0]?._id === (loggedUser?._id || loggedUser[0]) ? users[1].name : users[0].name;
 };
 
