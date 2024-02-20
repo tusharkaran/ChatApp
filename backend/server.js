@@ -58,14 +58,12 @@ io.on("connection", (socket) =>{
   
   
         var chat = newMessageRecieved.chat;
-             console.log("new message", chat);
         if(!chat.users) return console.log("chat users not define");
         chat.users.forEach(user =>{
                
             if(user._id == newMessageRecieved.sender._id){
                 return;
             }
-                  console.log("abc data", user);
             socket.in(user.id).emit("message Recieved" , newMessageRecieved);
         })
     });
