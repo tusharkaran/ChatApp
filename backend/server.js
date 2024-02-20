@@ -33,7 +33,7 @@ const PORT= process.env.PORT || 8080
 const server = app.listen(PORT,console.log("Server Started on PORT ",PORT));
 
 const io = require("socket.io")(server,{
-    pingTimeout:6000,
+    pingTimeout:60000,
     cors:{
         origin: "https://talktome.azurewebsites.net/",
     },
