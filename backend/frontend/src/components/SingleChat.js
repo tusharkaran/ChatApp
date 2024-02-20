@@ -114,7 +114,7 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
 
-    // if (!socketConnected) return;
+    if (!socketConnected) return;
 
     if (!typing) {
       setTyping(true);
@@ -148,6 +148,7 @@ socket.on("connection" , () => setSocketConnected(true));
 
   useEffect(()=>{
     socket.on("message Recieved",(newMessageRecieved) =>{
+       console.log("new message recieved");
       if(!selectedChatCompare || selectedChatCompare._id != newMessageRecieved.chat._id){
         if(!notification.includes(newMessageRecieved)){
           setNotification([newMessageRecieved , ...notification]);
