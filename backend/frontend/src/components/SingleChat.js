@@ -21,17 +21,16 @@ import ProfileModal from '../miscellaneous/ProfileModel';
 const ENDPOINT = "https://talktome.azurewebsites.net/";
 var socket , selectedChatCompare;
 
-const SingleChat = ({fetchAgain,setFetchAgain}) => {
-      const [messages, setMessages] = useState([]);
+const SingleChat = ({ fetchAgain, setFetchAgain }) => {
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
-    const { selectedChat, setSelectedChat, user ,notification,setNotification} =
-    ChatState();    
-      const defaultOptions = {
+
+  const defaultOptions = {
     loop: true,
     autoplay: true,
     animationData: animationData,
@@ -39,14 +38,16 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  const { selectedChat, setSelectedChat, user, notification, setNotification } =
+    ChatState();
 
-     const fetchMessages = async () => {
+  const fetchMessages = async () => {
     if (!selectedChat) return;
 
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${user?.token || user[0].token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
 
@@ -72,19 +73,14 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
     }
   };
 
-    const getsenderData = () =>{
-        let usernew = getSenderFull(user, selectedChat.users);
-        return usernew?.name || usernew[0]?.name ;
-    }
-
-   const sendMessage = async (event) => {
+  const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
       socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${user?.token || user[0].token}`,
+            Authorization: `Bearer ${user.token}`,
           },
         };
         setNewMessage("");
@@ -111,6 +107,39 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
     }
   };
 
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+
+    selectedChatCompare = selectedChat;
+    // eslint-disable-next-line
+  }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
+      } else {
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
+
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
 
@@ -131,35 +160,6 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
       }
     }, timerLength);
   };
-    useEffect(() => {
-    fetchMessages();
-
-    selectedChatCompare = selectedChat;
-    // eslint-disable-next-line
-  }, [selectedChat]);
-
-  useEffect(() =>{
-socket = io(ENDPOINT);
-socket.emit("setup",user);
-socket.on("connected" , () => setSocketConnected(true));
-   socket.on("typing", () => setIsTyping(true));
-    socket.on("stop typing", () => setIsTyping(false));
-  },[]);
-
-  useEffect(()=>{
-    socket.on("message Recieved",(newMessageRecieved) =>{
-       console.log("new message recieved");
-      if(!selectedChatCompare || selectedChatCompare._id != newMessageRecieved.chat._id){
-        if(!notification.includes(newMessageRecieved)){
-          setNotification([newMessageRecieved , ...notification]);
-          setFetchAgain(!fetchAgain)
-        }
-      }else{
-         setMessages([...messages, newMessageRecieved]);
-      }
-    })
-  })
-
 
   return (
    <>
@@ -182,8 +182,7 @@ socket.on("connected" , () => setSocketConnected(true));
             />
             {!selectedChat.isGroupChat ?(
                 <>
-                {getsenderData()}
-             {/* {getSender(user, selectedChat.users)} */}
+             {getSender(user, selectedChat.users)}
                <ProfileModal user={ getSenderFull(user, selectedChat.users)}/>
                 </>
             ):(
