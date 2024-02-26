@@ -12,9 +12,9 @@ const path = require("path");
  connectDB();
 dotenv.config()
 app.use(express.json());
-app.get("/",(req,res)=>{
-    res.send("API is Running successfly ");
-})
+// app.get("/",(req,res)=>{
+//     res.send("API is Running successfly ");
+// })
 const __dirname1 = path.resolve();
 app.use(express.static(path.join(__dirname1, "/backend/frontend/build")));
 
