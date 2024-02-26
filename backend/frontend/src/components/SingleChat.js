@@ -92,6 +92,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
+            const { Convertdata } = await axios.get(
+          "https://655.mtis.workers.dev/translate",
+          {
+           params:{
+            'text': newMessage,
+            'source_lang':'en',
+            'target_lang':'fr'
+           }
+          }
+        );
+        console.log("conveted data", Convertdata);
         socket.emit("new message", data);
         setMessages([...messages, data]);
       } catch (error) {
