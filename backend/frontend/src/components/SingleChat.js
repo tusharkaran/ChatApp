@@ -74,6 +74,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   const sendMessage = async (event) => {
+     console.log("MESSAGE SENT 1");
     if (event.key === "Enter" && newMessage) {
       socket.emit("stop typing", selectedChat._id);
       try {
@@ -83,6 +84,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
+           console.log("MESSAGE SENT 2");
         setNewMessage("");
         const { data } = await axios.post(
           "/api/message",
@@ -92,6 +94,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
+           console.log("MESSAGE SENT 3");
             const { Convertdata } = await axios.get(
           "https://655.mtis.workers.dev/translate",
           {
@@ -124,8 +127,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
-
-    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
