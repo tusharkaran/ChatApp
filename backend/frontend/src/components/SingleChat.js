@@ -19,7 +19,7 @@ import { ChatState } from "../Context/ChatProvider";
 import ProfileModal from '../miscellaneous/ProfileModel';
 
 const ENDPOINT = "https://talktome.azurewebsites.net/";
-var socket , selectedChatCompare;
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
@@ -74,7 +74,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   const sendMessage = async (event) => {
-     console.log("MESSAGE SENT 1");
+    console.log("MESSAGE SENT 1");
     if (event.key === "Enter" && newMessage) {
       socket.emit("stop typing", selectedChat._id);
       try {
@@ -84,7 +84,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-           console.log("MESSAGE SENT 2");
+        console.log("MESSAGE SENT 2");
         setNewMessage("");
         const { data } = await axios.post(
           "/api/message",
@@ -94,15 +94,22 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-           console.log("MESSAGE SENT 3");
-            const { Convertdata } = await axios.get(
+        console.log("MESSAGE SENT 3");
+        const newconfig = {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+          },
+          params: {
+            'text': newMessage,
+            'source_lang': 'en',
+            'target_lang': 'fr'
+          }
+        };
+        const { Convertdata } = await axios.get(
           "https://655.mtis.workers.dev/translate",
           {
-           params:{
-            'text': newMessage,
-            'source_lang':'en',
-            'target_lang':'fr'
-           }
+            newconfig
           }
         );
         console.log("conveted data", Convertdata);
@@ -174,10 +181,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   return (
-   <>
-   {selectedChat ?(
     <>
-  <Text
+      {selectedChat ? (
+        <>
+          <Text
             fontSize={{ base: "28px", md: "30px" }}
             pb={3}
             px={2}
@@ -192,14 +199,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
             />
-            {!selectedChat.isGroupChat ?(
+            {!selectedChat.isGroupChat ? (
+              <>
+                {getSender(user, selectedChat.users)}
+                <ProfileModal user={getSenderFull(user, selectedChat.users)} />
+              </>
+            ) : (
+              <>
                 <>
-             {getSender(user, selectedChat.users)}
-               <ProfileModal user={ getSenderFull(user, selectedChat.users)}/>
-                </>
-            ):(
-                <>
-                  <>
                   {selectedChat.chatName.toUpperCase()}
                   <UpdateGroupChatModal
                     fetchMessages={fetchMessages}
@@ -207,10 +214,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     setFetchAgain={setFetchAgain}
                   />
                 </>
-                </>
+              </>
             )}
-               </Text>
-                <Box
+          </Text>
+          <Box
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
@@ -221,8 +228,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             borderRadius="lg"
             overflowY="hidden"
           >
-            {loading ?(
-             <Spinner
+            {loading ? (
+              <Spinner
                 size="xl"
                 w={20}
                 h={20}
@@ -231,12 +238,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               />
             ) : (
               <>
-              <div className='messages'>
-            <ScrollableChat messages={messages} />
-              </div>
+                <div className='messages'>
+                  <ScrollableChat messages={messages} />
+                </div>
               </>
             )}
-           <FormControl
+            <FormControl
               onKeyDown={sendMessage}
               id="first-name"
               isRequired
@@ -263,15 +270,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               />
             </FormControl>
           </Box>
-    </>
-   ):(
-       <Box display="flex" alignItems="center" justifyContent="center" h="100%">
+        </>
+      ) : (
+        <Box display="flex" alignItems="center" justifyContent="center" h="100%">
           <Text fontSize="3xl" pb={3} fontFamily="Work sans">
             Click on a user to start chatting
           </Text>
         </Box>
-   )}
-   </>
+      )}
+    </>
   )
 }
 
