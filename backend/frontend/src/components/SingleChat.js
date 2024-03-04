@@ -84,6 +84,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               text: newMessage,
               source_lang: user?.lang || user[0]?.lang,
               target_lang: getSenderFull(user, selectedChat.users)?.lang,
+            }, headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, UPDATE",
+              "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+              "Content-Type": "application/json"
             }
           });
           const Convertdata = response.data;
