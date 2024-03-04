@@ -1,15 +1,16 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv")
-const {chats} = require("./data/data")
+const { chats } = require("./data/data")
 const connectDB = require("./config/db")
 const userRoutes = require('./routes/userRoutes')
-const {notFound,errorHandler} = require('../backend/middleware/errorMidleware')
+const { notFound, errorHandler } = require('../backend/middleware/errorMidleware')
 const chatRoutes = require('./routes/chatRoutes')
 const messageRoutes = require('./routes/messageRoutes')
+const languageRoutes = require('./routes/languageRoutes')
 const path = require("path");
 
- connectDB();
+connectDB();
 dotenv.config()
 app.use(express.json());
 // app.get("/",(req,res)=>{
@@ -18,9 +19,10 @@ app.use(express.json());
 const __dirname1 = path.resolve();
 app.use(express.static(path.join(__dirname1, "/backend/frontend/build")));
 
-app.use('/api/user',userRoutes)
+app.use('/api/user', userRoutes)
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/language", languageRoutes);
 
 // app.get("*", (req, res) => {
 //    res.sendFile(path.resolve(__dirname1,"backend","frontend", "build",     
@@ -29,8 +31,8 @@ app.use("/api/message", messageRoutes);
 app.use(notFound);
 app.use(errorHandler)
 
-const PORT= process.env.PORT || 8080
-const server = app.listen(PORT,console.log("Server Started on PORT ",PORT));
+const PORT = process.env.PORT || 8080
+const server = app.listen(PORT, console.log("Server Started on PORT ", PORT));
 
 const io = require("socket.io")(server, {
   pingTimeout: 60000,

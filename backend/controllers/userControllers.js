@@ -4,17 +4,17 @@ const geneterToken = require('../config/generateToken')
 
 
 
-const resgisterUser = asyncHandler(async (req,res) => {
-    const {name,email,password,pic} = req.body;
-    if(!name || !email || !password){
+const resgisterUser = asyncHandler(async (req, res) => {
+    const { name, email, password, pic, lang } = req.body;
+    if (!name || !email || !password || !lang) {
         res.status(400);
         throw new Error("Please Enter All the Fields");
     }
 
-    const userExists = await User.findOne({email});
-    if(userExists){
+    const userExists = await User.findOne({ email });
+    if (userExists) {
         res.status(400);
-         throw new Error("User Already Exists");
+        throw new Error("User Already Exists");
     }
 
     const user = await User.create({
@@ -22,53 +22,55 @@ const resgisterUser = asyncHandler(async (req,res) => {
         email,
         password,
         pic,
+        lang
     });
-    if(user){
+    if (user) {
         res.status(201).json({
             _id: user._id,
             name: user.name,
-            email:user.email,
+            email: user.email,
             pic: user.pic,
-            token:geneterToken(user._id)
+            lang: user.lang,
+            token: geneterToken(user._id)
         })
-    }else{
+    } else {
         res.status(400);
         throw new Error("Failed to Create the User");
     }
-    
+
 });
 
-const authUser = asyncHandler(async(req,res) => {
-    const {email,password} = req.body;
-    const user = await User.findOne({email});
+const authUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-    if(user && (await user.matchPassword(password))){
+    if (user && (await user.matchPassword(password))) {
         res.json({
-            _id:user._id,
-            name:user.name,
-            email:user.email,
-            pic:user.pic,
-            token:geneterToken(user._id)
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            pic: user.pic,
+            token: geneterToken(user._id)
 
         })
-    }else{
+    } else {
         res.status(401);
         throw new Error("Invalid Email or Password");
     }
 });
 
 const allUsers = asyncHandler(async (req, res) => {
-  const keyword = req.query.search
-    ? {
-        $or: [
-          { name: { $regex: req.query.search, $options: "i" } },
-          { email: { $regex: req.query.search, $options: "i" } },
-        ],
-      }
-    : {};
+    const keyword = req.query.search
+        ? {
+            $or: [
+                { name: { $regex: req.query.search, $options: "i" } },
+                { email: { $regex: req.query.search, $options: "i" } },
+            ],
+        }
+        : {};
 
-  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
-  res.send(users);
+    const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+    res.send(users);
 });
 
-module.exports = {resgisterUser,authUser,allUsers};
+module.exports = { resgisterUser, authUser, allUsers };

@@ -19,7 +19,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   };
 
   try {
-var message = await Message.create(newMessage);
+    var message = await Message.create(newMessage);
     message = await message.populate("sender", "name pic");
     message = await message.populate("chat");
     message = await User.populate(message, {
@@ -46,4 +46,34 @@ const allMessages = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
-module.exports ={allMessages,sendMessage};
+const ChangeMessage = asyncHandler(async (req, res) => {
+  try {
+    const apiUrl = "https://655.mtis.workers.dev/translate";
+    const params = {
+      'text': req.query.text,
+      'source_lang': req.query.source_lang,
+      'target_lang': req.query.target_lang,
+    };
+
+    const url = new URL(apiUrl);
+    url.search = new URLSearchParams(params).toString();
+    const options = {
+      method: 'GET',
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, UPDATE",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+        "Content-Type": "application/json"
+      }
+    };
+
+    const response = await fetch(url.toString(), options);
+    const data = await response.json();
+    res.json(data);
+
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+module.exports = { allMessages, sendMessage, ChangeMessage };

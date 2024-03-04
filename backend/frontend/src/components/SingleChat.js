@@ -74,9 +74,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   const sendMessage = async (event) => {
-    console.log("MESSAGE SENT 1");
+    let newtextchangemessage = newMessage;
     if (event.key === "Enter" && newMessage) {
       socket.emit("stop typing", selectedChat._id);
+      try {
+        if (user[0]?.lang != getSenderFull(user, selectedChat.users)?.lang) {
+          const response = await axios.get("/api/language", {
+            params: {
+              text: newMessage,
+              source_lang: user?.lang || user[0]?.lang,
+              target_lang: getSenderFull(user, selectedChat.users)?.lang,
+            }
+          });
+          const Convertdata = response.data;
+          if (Convertdata && Convertdata.response && Convertdata.response.translated_text) {
+            newtextchangemessage = `${newMessage}  ( ${Convertdata.response.translated_text} )`;
+            setNewMessage(newtextchangemessage);
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+      }
+
       try {
         const config = {
           headers: {
@@ -84,7 +103,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-        console.log("MESSAGE SENT 2");
         setNewMessage("");
         const { data } = await axios.post(
           "/api/message",
@@ -94,25 +112,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-        console.log("MESSAGE SENT 3");
-        const newconfig = {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
-          },
-          params: {
-            'text': newMessage,
-            'source_lang': 'en',
-            'target_lang': 'fr'
-          }
-        };
-        const { Convertdata } = await axios.get(
-          "https://655.mtis.workers.dev/translate",
-          {
-            newconfig
-          }
-        );
-        console.log("conveted data", Convertdata);
+
         socket.emit("new message", data);
         setMessages([...messages, data]);
       } catch (error) {
