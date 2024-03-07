@@ -94,7 +94,7 @@ const chats = [
         email: "piyush@example.com",
       },
       {
-        name: "Guest User",
+        name: "Guest User abcdd",
         email: "guest@example.com",
       },
     ],
@@ -107,4 +107,4 @@ const chats = [
   },
 ];
 
-module.exports= {chats};
+module.exports = { chats };
